@@ -31,7 +31,18 @@ app.get('/ping', (req, res) => {
 feature/signin 브랜치의 경우 app.post('/users/signin', ...)
 feature/signup 브랜치의 경우 app.post('/users/signup', ...)
 */
-app.post('/users/signup', async (req, res) => {
+app.post('/users/signin', async (req, res) => {
+  const { email, password } = req.body;
+  const user = await myDataSource.query(`
+    SELECT
+      users.id
+    FROM
+      users
+    WHERE
+      users.email = ?
+   `, [email]);
+   
+	app.post('/users/signup', async (req, res) => {
   const { user_name, email, password } = req.body
     return await myDataSource.query(
       `INSERT INTO users (
@@ -41,6 +52,12 @@ app.post('/users/signup', async (req, res) => {
         ) VALUES (?, ?, ?, ?)
     `, [user_name, email, password]
     )
+})
+  if (!user) {
+    res.json({message: "SIGNUP_REQUIRED"});
+  }
+	
+  return res.json({ userId: user.id});
 })
 
 app.listen(PORT, () => {
