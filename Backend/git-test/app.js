@@ -41,7 +41,18 @@ app.post('/users/signin', async (req, res) => {
     WHERE
       users.email = ?
    `, [email]);
-	
+   
+	app.post('/users/signup', async (req, res) => {
+  const { user_name, email, password } = req.body
+    return await myDataSource.query(
+      `INSERT INTO users (
+          name,
+          email,
+          password			
+        ) VALUES (?, ?, ?, ?)
+    `, [user_name, email, password]
+    )
+})
   if (!user) {
     res.json({message: "SIGNUP_REQUIRED"});
   }
